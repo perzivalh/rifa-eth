@@ -1,5 +1,5 @@
 // Configuración
-const TICKET_PRICE = 0.0001; // Precio por ticket en ETH
+const TICKET_PRICE = 0.00001; // Precio por ticket en ETH
 const MIN_TICKETS = 1;
 const MAX_TICKETS = 100;
 
@@ -19,7 +19,7 @@ const usernameInput = document.getElementById('username');
 
 function updateDisplay() {
   quantityDisplay.textContent = currentQuantity;
-  const totalPrice = (currentQuantity * TICKET_PRICE).toFixed(4);
+  const totalPrice = (currentQuantity * TICKET_PRICE).toFixed(5);
   totalPriceDisplay.textContent = `${totalPrice} ETH`;
   decreaseBtn.disabled = currentQuantity <= MIN_TICKETS;
   increaseBtn.disabled = currentQuantity >= MAX_TICKETS;
@@ -45,23 +45,22 @@ async function buyTickets() {
   const quantity = currentQuantity;
 
   if (!username || username.length < 3) {
-    alert("Ingresa un username válido de al menos 3 caracteres");
+    showNotification("⚠️ Ingresa un username válido de al menos 3 caracteres", "error");
     return;
   }
 
   if (typeof window.ethereum === 'undefined') {
-    alert("Necesitas MetaMask para continuar");
+    showNotification("🦊 Necesitas MetaMask para continuar", "error");
     return;
   }
 
   try {
-    // Conectar a MetaMask
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
 
     const raffleContract = new ethers.Contract(contractAddress, contractABI, signer);
-    
+
     const ticketPrice = ethers.utils.parseEther(TICKET_PRICE.toString());
     const totalCost = ticketPrice.mul(quantity);
 
@@ -69,14 +68,29 @@ async function buyTickets() {
       value: totalCost
     });
 
-    alert("Transacción enviada, espera confirmación...");
+    showNotification("⏳ Transacción enviada. Esperando confirmación...", "success");
+
     await tx.wait();
-    alert("¡Compra exitosa!");
+
+    showNotification("🎉 ¡Compra completada con éxito!", "success");
   } catch (error) {
     console.error(error);
-    alert("Error al comprar tickets: " + (error.data?.message || error.message));
+
+    // Cancelación por el usuario
+    if (error.code === 4001) {
+      showNotification("❌ Transacción cancelada por el usuario", "error");
+    }
+    // Error por fondos insuficientes
+    else if (error.message.includes("insufficient funds")) {
+      showNotification("💸 Fondos insuficientes para completar la compra", "error");
+    }
+    // Otro error (fallback)
+    else {
+      showNotification("❌ Transacción cancelada por el usuario" , "error");
+    }
   }
 }
+
 
 decreaseBtn.addEventListener('click', decreaseQuantity);
 increaseBtn.addEventListener('click', increaseQuantity);
@@ -92,3 +106,20 @@ usernameInput.addEventListener('input', function (e) {
 });
 
 updateDisplay();
+
+function showNotification(message, type = "success") {
+  const container = document.getElementById('notification-container');
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+
+  container.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      container.removeChild(notification);
+    }, 500);
+  }, 3000);
+}
+

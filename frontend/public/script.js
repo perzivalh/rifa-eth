@@ -87,7 +87,7 @@ let signer;
 async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("Instala Metamask para continuar.");
+      showNotification("🦊 Instala Metamask para continuar.", "error");
       return false;
     }
 
@@ -97,11 +97,11 @@ async function connectWallet() {
     const address = await signer.getAddress();
 
     console.log("Wallet conectada:", address);
-    alert("Wallet conectada: " + address);
+    showNotification("✅ Wallet conectada: " + address.slice(0, 6) + "...", "success");
     return true;
   } catch (error) {
     console.error("Error al conectar la wallet:", error);
-    alert("Error al conectar la wallet: " + error.message);
+    showNotification("❌ Error al conectar la wallet: " + error.message, "error");
     return false;
   }
 }
@@ -114,3 +114,27 @@ async function participate() {
   // Redirige a la página del formulario después de conectar wallet
   window.location.href = "form/form.html";
 }
+
+// Función para mostrar notificaciones
+function showNotification(message, type = "success") {
+  const container = document.getElementById("notifications-container");
+
+  const notif = document.createElement("div");
+  notif.className = `notification animated ${type}`;
+  notif.innerText = message;
+
+  container.appendChild(notif);
+
+  // Activar animación con un pequeño delay
+  setTimeout(() => {
+    notif.classList.add("show");
+  }, 100);
+
+  // Quitar después de 4s
+  setTimeout(() => {
+    notif.classList.remove("show");
+    setTimeout(() => notif.remove(), 400);
+  }, 4000);
+}
+
+

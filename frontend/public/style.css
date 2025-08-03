@@ -97,8 +97,8 @@ body {
 .expanded-description {
     display: none;
     color: #ccc;
-    margin-top: 15px;
-    margin-bottom: 30px;
+    margin-top: 0px;
+    margin-bottom: 10px;
     line-height: 1.6;
 }
 
@@ -269,7 +269,7 @@ body {
     display: flex;
     align-items: baseline; /* Cambié de center a baseline para alinear por la línea base */
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 .description {
@@ -289,4 +289,40 @@ body {
 .participate-btn {
     display: block;
     margin-top: 20px; /* espacio arriba */
+}
+
+#notifications-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+}
+
+.notification {
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.notification.success {
+  background-color: #2ecc71;
+}
+
+.notification.error {
+  background-color: #e74c3c;
+}
+
+.notification.show {
+  transform: translateX(0);
+  opacity: 1;
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CharityRaffle is Ownable {
-    uint256 public constant TICKET_PRICE = 0.0001 ether;
+    uint256 public constant TICKET_PRICE = 0.00001 ether;
     uint256 public immutable goal;
     uint256 public immutable endTime;
     uint256 public totalRaised;
