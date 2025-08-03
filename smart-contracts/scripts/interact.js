@@ -1,18 +1,24 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const contractAddress = "DIRECCION_DEL_DEPLOY"; // copiala del deploy.js
-  const CharityRaffle = await ethers.getContractFactory("CharityRaffle");
-  const raffle = await CharityRaffle.attach(contractAddress);
+  const contractAddress = "0x04e63b4Ef4732bED02DdAef0544963ECbd1F2c19"; // Actualiza aquí
 
-  // Simulá una compra de boletos desde una cuenta secundaria
-  const [owner, user1] = await ethers.getSigners();
+  const signers = await ethers.getSigners();
+  const user1 = signers[1];
 
-  const tx = await raffle.connect(user1).buyTickets(2, "usuarioTest", {
-    value: ethers.parseEther("0.01")
+  const CharityRaffle = await ethers.getContractFactory("CharityRaffle", user1);
+  const raffle = CharityRaffle.attach(contractAddress);
+
+  const tx = await raffle.buyTickets(2, "usuarioTest", {
+    value: ethers.parseEther("0.0002")
   });
+
   await tx.wait();
 
   console.log("Boletos comprados por usuarioTest");
 }
-main();
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

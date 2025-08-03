@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CharityRaffle is Ownable {
-    uint256 public constant TICKET_PRICE = 0.005 ether;
+    uint256 public constant TICKET_PRICE = 0.0001 ether;
     uint256 public immutable goal;
     uint256 public immutable endTime;
     uint256 public totalRaised;
@@ -80,4 +80,9 @@ contract CharityRaffle is Ownable {
     function progress() external view returns (uint256) {
         return (totalRaised * 100) / goal;
     }
+
+    function totalParticipants() external view returns (uint256) {
+        return participants.length;
+    }
+
 }
